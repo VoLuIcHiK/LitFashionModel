@@ -18,7 +18,7 @@ class LitFashionMNIST(L.LightningModule):
         self.hidden_size = hidden_size
         self.learning_rate = learning_rate
 
-        self.model = nn.Sequential(
+        '''self.model = nn.Sequential(
             nn.Flatten(),
             nn.Linear(channels * width * height, hidden_size),
             nn.ReLU(),
@@ -27,8 +27,8 @@ class LitFashionMNIST(L.LightningModule):
             nn.ReLU(),
             nn.Dropout(0.1),
             nn.Linear(hidden_size, num_classes),
-        )
-        '''self.model = nn.Sequential(
+        )'''
+        self.model = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5),
             nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5),
             nn.MaxPool2d(kernel_size=2),
@@ -39,22 +39,30 @@ class LitFashionMNIST(L.LightningModule):
             nn.Linear(in_features=120, out_features=84),
             nn.ReLU(),
             nn.Linear(in_features=84, out_features=10)
-        )'''
+        )
 
     def forward(self, x):
-        x = self.model(x)
+        #x = self.model(x)
+        x = F.relu(self.conv1(x))
+        x = F.max_pool2d(x, kernel_size=2)
+        x = F.relu(self.conv2(x))
+        x = F.max_pool2d(x, kernel_size=2)
+        x = x.view(x.size(0), -1)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
         return F.log_softmax(x, dim=1)
 
     def training_step(self, batch):
         x, y = batch
         logits = self(x)
-        loss = F.nll_loss(logits, y)
+        loss = F.cross_entropy(logits, y)
         return loss
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         logits = self(x)
-        loss = F.nll_loss(logits, y)
+        loss = F.cross_entropy(logits, y)
         preds = torch.argmax(logits, dim=1)
         acc = accuracy(preds, y, task="multiclass", num_classes=10)
         self.log("val_loss", loss, prog_bar=True)
