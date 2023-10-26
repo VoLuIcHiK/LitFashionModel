@@ -9,7 +9,7 @@ def train():
     model = LitFashionMNIST(*dm.dims, dm.num_classes)
     # Init trainer
     trainer = L.Trainer(
-        max_epochs=3,
+        max_epochs=10,
         accelerator="auto",
         devices=1,
     )
