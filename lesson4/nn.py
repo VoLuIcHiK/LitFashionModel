@@ -16,7 +16,7 @@ class LitFashionMNIST(L.LightningModule):
         self.height = height
         self.num_classes = num_classes
         self.learning_rate = learning_rate
-        self.model = nn.Sequantial(
+        self.model = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5),
             nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5),
             nn.Linear(in_features=256, out_features=120),
