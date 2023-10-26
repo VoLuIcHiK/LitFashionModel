@@ -17,7 +17,6 @@ class LitFashionMNIST(L.LightningModule):
         self.num_classes = num_classes
         self.hidden_size = hidden_size
         self.learning_rate = learning_rate
-
         '''self.model = nn.Sequential(
             nn.Flatten(),
             nn.Linear(channels * width * height, hidden_size),
@@ -28,18 +27,13 @@ class LitFashionMNIST(L.LightningModule):
             nn.Dropout(0.1),
             nn.Linear(hidden_size, num_classes),
         )'''
-        self.model = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5),
-            nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5),
-            nn.MaxPool2d(kernel_size=2),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
-            nn.Linear(in_features=256, out_features=120),
-            nn.ReLU(),
-            nn.Linear(in_features=120, out_features=84),
-            nn.ReLU(),
-            nn.Linear(in_features=84, out_features=10)
-        )
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=6,
+                               kernel_size=5)
+        self.conv2 = nn.Conv2d(in_channels=6, out_channels=16,
+                               kernel_size=5)
+        self.fc1 = nn.Linear(in_features=256, out_features=120)
+        self.fc2 = nn.Linear(in_features=120, out_features=84)
+        self.fc3 = nn.Linear(in_features=84, out_features=10)
 
     def forward(self, x):
         #x = self.model(x)
@@ -70,4 +64,5 @@ class LitFashionMNIST(L.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
+        #добавить lr_scheduler
         return optimizer
