@@ -9,17 +9,37 @@ BATCH_SIZE = 64
 
 
 class LitFashionMNIST(L.LightningModule):
-    def __init__(self, num_classes, learning_rate=2e-4):
+    def __init__(self, channels, width, height, num_classes, hidden_size=64, learning_rate=2e-4):
         super().__init__()
+        self.channels = channels
+        self.width = width
+        self.height = height
         self.num_classes = num_classes
+        self.hidden_size = hidden_size
         self.learning_rate = learning_rate
+
         self.model = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(channels * width * height, hidden_size),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(hidden_size, num_classes),
+        )
+        '''self.model = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5),
             nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5),
+            nn.MaxPool2d(kernel_size=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2),
             nn.Linear(in_features=256, out_features=120),
+            nn.ReLU(),
             nn.Linear(in_features=120, out_features=84),
+            nn.ReLU(),
             nn.Linear(in_features=84, out_features=10)
-        )
+        )'''
 
     def forward(self, x):
         x = self.model(x)
