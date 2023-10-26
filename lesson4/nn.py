@@ -1,7 +1,7 @@
 import os
 import lightning as L
 import torch
-import torch.nn as nn
+from torch import nn
 import torch.nn.functional as F
 from torchmetrics.functional import accuracy
 PATH_DATASETS = './lesson4'

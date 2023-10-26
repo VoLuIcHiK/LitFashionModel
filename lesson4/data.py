@@ -1,9 +1,5 @@
-import os
 import lightning as L
-import torch
-import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset, random_split
-from torchmetrics.functional import accuracy
 from torchvision import transforms
 from torchvision.datasets import FashionMNIST
 
