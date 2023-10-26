@@ -9,11 +9,8 @@ BATCH_SIZE = 64
 
 
 class LitFashionMNIST(L.LightningModule):
-    def __init__(self, channels, width, height, num_classes, learning_rate=2e-4):
+    def __init__(self, num_classes, learning_rate=2e-4):
         super().__init__()
-        self.channels = channels
-        self.width = width
-        self.height = height
         self.num_classes = num_classes
         self.learning_rate = learning_rate
         self.model = nn.Sequential(

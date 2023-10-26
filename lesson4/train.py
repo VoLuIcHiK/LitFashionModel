@@ -6,7 +6,7 @@ def train():
     # Init DataModule
     dm = FashionMNISTDataModule()
     # Init model from datamodule's attributes
-    model = LitFashionMNIST(*dm.dims, dm.num_classes)
+    model = LitFashionMNIST(dm.num_classes)
     # Init trainer
     trainer = L.Trainer(
         max_epochs=3,
