@@ -27,24 +27,20 @@ class LitFashionMNIST(L.LightningModule):
             nn.Dropout(0.1),
             nn.Linear(hidden_size, num_classes),
         )'''
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=6,
-                               kernel_size=5)
-        self.conv2 = nn.Conv2d(in_channels=6, out_channels=16,
-                               kernel_size=5)
-        self.fc1 = nn.Linear(in_features=256, out_features=120)
-        self.fc2 = nn.Linear(in_features=120, out_features=84)
-        self.fc3 = nn.Linear(in_features=84, out_features=10)
+        self.model = nn.Sequential(
+            nn.Conv2d(in_channels=1, out_channels=16, kernel_size=5),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(in_channels=16, out_channels=32, kernel_size=5),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Linear(in_features=5 * 5 * 32, out_features=120),
+            nn.Linear(in_features=120, out_features=84),
+            nn.Linear(in_features=84, out_features=10)
+        )
 
     def forward(self, x):
-        #x = self.model(x)
-        x = F.relu(self.conv1(x))
-        x = F.max_pool2d(x, kernel_size=2)
-        x = F.relu(self.conv2(x))
-        x = F.max_pool2d(x, kernel_size=2)
-        x = x.view(x.size(0), -1)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
+        x = self.model(x)
         return F.log_softmax(x, dim=1)
 
     def training_step(self, batch):

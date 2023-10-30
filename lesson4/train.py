@@ -15,4 +15,5 @@ def train():
     )
     # Pass the datamodule as arg to trainer.fit to override model hooks :)
     trainer.fit(model, dm)
+    '''Надо добавить логгер, calback-и и lr_sheduler'''
 
