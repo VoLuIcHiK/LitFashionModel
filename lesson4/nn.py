@@ -28,16 +28,20 @@ class LitFashionMNIST(L.LightningModule):
             nn.Linear(hidden_size, num_classes),
         )'''
         self.model = nn.Sequential(
-            #input (1 * 28 * 28)
+            #input (28 * 28 * 1)
             nn.Conv2d(in_channels=1, out_channels=16, kernel_size=5),
+            # output (24 *24 * 16)
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            # input (16 * 14 * 14)
+            # input (12 * 12 * 16)
             nn.Conv2d(in_channels=16, out_channels=32, kernel_size=5),
+            # output (8 * 8 * 32)
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            # input (32 * 7 * 7)
-            nn.Linear(in_features=7 * 7 * 32, out_features=120),
+            # output (4 * 4 * 32)
+            nn.Flatten(),
+            # input (4 * 4 * 32)
+            nn.Linear(in_features=4 * 4 * 32, out_features=120),
             nn.Linear(in_features=120, out_features=84),
             nn.Linear(in_features=84, out_features=10)
         )
