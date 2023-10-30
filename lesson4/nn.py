@@ -55,4 +55,4 @@ class LitFashionMNIST(L.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
         lr_scheduler = ExponentialLR(optimizer, gamma=0.9)
-        return optimizer, lr_scheduler
+        return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
