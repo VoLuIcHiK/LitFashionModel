@@ -4,43 +4,30 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torchmetrics.functional import accuracy
+from torch.optim.lr_scheduler import ExponentialLR
 PATH_DATASETS = './lesson4'
 BATCH_SIZE = 64
 
 
 class LitFashionMNIST(L.LightningModule):
-    def __init__(self, channels, width, height, num_classes, hidden_size=64, learning_rate=2e-4):
+    def __init__(self, num_classes, learning_rate=2e-4):
         super().__init__()
-        self.channels = channels
-        self.width = width
-        self.height = height
         self.num_classes = num_classes
-        self.hidden_size = hidden_size
         self.learning_rate = learning_rate
-        '''self.model = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(channels * width * height, hidden_size),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(hidden_size, hidden_size),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(hidden_size, num_classes),
-        )'''
         self.model = nn.Sequential(
-            #input (28 * 28 * 1)
+            #(channels * width * height)
+            #input (1 * 28 * 28)
             nn.Conv2d(in_channels=1, out_channels=16, kernel_size=5),
-            # output (24 *24 * 16)
+            # output (16 * 24 * 24)
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            # input (12 * 12 * 16)
+            # input (16 * 12 * 12)
             nn.Conv2d(in_channels=16, out_channels=32, kernel_size=5),
-            # output (8 * 8 * 32)
+            # output (32 * 8 * 8)
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            # output (4 * 4 * 32)
-            nn.Flatten(),
-            # input (4 * 4 * 32)
+            # output (32 * 4 * 4)
+            nn.Flatten(), #преобразовали в тензор размера (4 * 4, 1)
             nn.Linear(in_features=4 * 4 * 32, out_features=120),
             nn.Linear(in_features=120, out_features=84),
             nn.Linear(in_features=84, out_features=10)
@@ -67,5 +54,5 @@ class LitFashionMNIST(L.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
-        #добавить lr_scheduler
-        return optimizer
+        lr_scheduler = ExponentialLR(optimizer, gamma=0.9)
+        return lr_scheduler

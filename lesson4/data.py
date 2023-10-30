@@ -8,7 +8,7 @@ BATCH_SIZE = 64
 
 
 class FashionMNISTDataModule(L.LightningDataModule):
-    def __init__(self, data_dir: str = PATH_DATASETS):
+    def __init__(self, learning_rate, data_dir: str = PATH_DATASETS):
         super().__init__()
         self.data_dir = data_dir
         self.transform = transforms.Compose(
@@ -19,19 +19,20 @@ class FashionMNISTDataModule(L.LightningDataModule):
         )
         self.dims = (1, 28, 28)
         self.num_classes = 10
+        self.learning_rate = learning_rate
 
     def prepare_data(self):
-        # download
+        #скачивание данных
         FashionMNIST(self.data_dir, train=True, download=True)
         FashionMNIST(self.data_dir, train=False, download=True)
 
     def setup(self, stage=None):
-        # Assign train/val datasets for use in dataloaders
+        #разделение на train/val для использования даталоэдером
         if stage == "fit" or stage is None:
             fmnist_full = FashionMNIST(self.data_dir, train=True, transform=self.transform)
             self.fmnist_train, self.fmnist_val = random_split(fmnist_full, [55000, 5000])
 
-        # Assign test dataset for use in dataloader(s)
+        #тестовый датасет для использования даталоэдером
         if stage == "test" or stage is None:
             self.fmnist_test = FashionMNIST(self.data_dir, train=False, transform=self.transform)
 
