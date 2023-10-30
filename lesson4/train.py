@@ -1,7 +1,8 @@
 from .data import FashionMNISTDataModule
 from .nn import LitFashionMNIST
 import lightning as L
-import wandb
+#import wandb
+from lightning.pytorch.loggers import WandbLogger
 LEARNING_RATE = 0.0001
 BATCH_SIZE = 64
 EPOCHS = 10
@@ -18,22 +19,29 @@ CONFIG = dict(
 )
 
 def train(PATH):
-    run = wandb.init(project="fashion_mnist_lit", reinit=True, config=CONFIG)
-    config = run.config
+    #run = wandb.init(project="fashion_mnist_lit", reinit=True, config=CONFIG)
+    #config = run.config
+    wandb_logger = WandbLogger(project="fashion_mnist_lit", config=CONFIG)
     dm = FashionMNISTDataModule(learning_rate=LEARNING_RATE)
-    config.learning_rate = LEARNING_RATE
     model = LitFashionMNIST(dm.num_classes, dm.learning_rate)
+    callbacks = [
+        L.ModelCheckpoint(
+            dirpath="./checkpoints",
+            every_n_train_steps=1,
+        ),
+    ]
     #добавить в wandb "loss": loss
     trainer = L.Trainer(
         max_epochs=EPOCHS,
         accelerator="auto",
         devices=1,
         default_root_dir=PATH,
-        logger=run
+        logger=wandb_logger,
+        callbacks=callbacks
     )
     trainer.fit(model, dm)
-    checkpoint_callback = L.ModelCheckpoint(dirpath=PATH, save_top_k=2, monitor="val_loss")
-    run.finish()
+    #checkpoint_callback = L.ModelCheckpoint(dirpath=PATH, save_top_k=2, monitor="val_loss")
+    #run.finish()
     #checkpoint_callback.best_model_path
     '''Надо добавить логгер, calback-и и lr_sheduler'''
 
