@@ -2,7 +2,6 @@ import lightning as L
 from torch.utils.data import DataLoader, Dataset, random_split
 from torchvision import transforms
 from torchvision.datasets import FashionMNIST
-
 PATH_DATASETS = './lesson4'
 BATCH_SIZE = 64
 
