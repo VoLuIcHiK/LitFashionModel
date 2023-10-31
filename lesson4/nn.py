@@ -57,7 +57,7 @@ class LitFashionMNIST(L.LightningModule):
         self.log("val_loss", loss, prog_bar=True)
         self.log("val_acc", acc, prog_bar=True)
         WandbLogger.log_image(self, key='sample_images', images=images, caption=captions)
-        WandbLogger.watch(self.model, log='all')
+        #WandbLogger.watch(self.model, log='all')
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
