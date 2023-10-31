@@ -5,6 +5,7 @@ from torch import nn
 import torch.nn.functional as F
 from torchmetrics.functional import accuracy
 from torch.optim.lr_scheduler import ExponentialLR
+from lightning.pytorch.loggers import WandbLogger
 PATH_DATASETS = './lesson4'
 BATCH_SIZE = 64
 
@@ -55,8 +56,8 @@ class LitFashionMNIST(L.LightningModule):
         captions = [f'Ground Truth: {y_i} - Prediction: {y_pred}' for y_i, y_pred in zip(y[:n], preds[:n])]
         self.log("val_loss", loss, prog_bar=True)
         self.log("val_acc", acc, prog_bar=True)
-        #self.log_image(key='sample_images', images=images, caption=captions)
-        self.watch(self.model, log='all')
+        WandbLogger.log_image(key='sample_images', images=images, caption=captions)
+        WandbLogger.watch(self.model, log='all')
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
