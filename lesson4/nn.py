@@ -56,7 +56,7 @@ class LitFashionMNIST(L.LightningModule):
         captions = [f'Ground Truth: {y_i} - Prediction: {y_pred}' for y_i, y_pred in zip(y[:n], preds[:n])]
         self.log("val_loss", loss, prog_bar=True)
         self.log("val_acc", acc, prog_bar=True)
-        WandbLogger.log_image(key='sample_images', images=images, caption=captions)
+        WandbLogger.log_image(self, key='sample_images', images=images, caption=captions)
         WandbLogger.watch(self.model, log='all')
 
     def configure_optimizers(self):
