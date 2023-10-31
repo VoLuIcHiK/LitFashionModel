@@ -41,6 +41,7 @@ class LitFashionMNIST(L.LightningModule):
         x, y = batch
         logits = self(x)
         loss = F.cross_entropy(logits, y)
+        self.log("train_loss", loss, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -54,8 +55,8 @@ class LitFashionMNIST(L.LightningModule):
         captions = [f'Ground Truth: {y_i} - Prediction: {y_pred}' for y_i, y_pred in zip(y[:n], preds[:n])]
         self.log("val_loss", loss, prog_bar=True)
         self.log("val_acc", acc, prog_bar=True)
-        self.log_image(key='sample_images', images=images, caption=captions)
-        #self.log(batch)
+        #self.log_image(key='sample_images', images=images, caption=captions)
+        self.watch(self.model, log='all')
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
