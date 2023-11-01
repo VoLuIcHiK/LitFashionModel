@@ -10,10 +10,10 @@ BATCH_SIZE = 64
 
 
 class LitFashionMNIST(L.LightningModule):
-    def __init__(self, num_classes, len_fmnist_train, batch_size, epochs):
+    def __init__(self, num_classes, len_train, batch_size, epochs):
         super().__init__()
         self.num_classes = num_classes
-        self.len_fmnist_train = len_fmnist_train
+        self.len_train = len_train
         self.batch_size = batch_size
         self.epochs = epochs
         self.model = nn.Sequential(
@@ -60,12 +60,12 @@ class LitFashionMNIST(L.LightningModule):
         #self.logger.log_image(self, key='sample_images', images=images, caption=captions)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
+        optimizer = torch.optim.SGD(self.parameters(), lr=0.001)
         #lr_scheduler = ExponentialLR(optimizer, gamma=0.9)
         lr_scheduler = OneCycleLR(
             optimizer,
             max_lr=0.01,
-            steps_per_epoch=len(self.len_fmnist_train)//(self.batch_size * 8),
+            steps_per_epoch=len(self.len_train)//(self.batch_size * 8),
             epochs=self.epochs,
             three_phase=True
         )

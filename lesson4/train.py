@@ -21,7 +21,7 @@ def train(path, epochs):
     )
     dm = FashionMNISTDataModule()
     model = LitFashionMNIST(num_classes=dm.num_classes,
-                            len_fmnist_train=55000,
+                            len_train=55000,
                             batch_size=BATCH_SIZE,
                             epochs=epochs)
     callbacks = [ModelCheckpoint(dirpath="./checkpoints",
