@@ -65,9 +65,10 @@ class LitFashionMNIST(L.LightningModule):
         lr_scheduler = OneCycleLR(
             optimizer,
             max_lr=0.01,
-            steps_per_epoch=self.len_train//(self.batch_size * 8),
+            steps_per_epoch=2 * self.len_train,
             epochs=self.epochs,
             three_phase=True
         )
         return [optimizer], [{'scheduler': lr_scheduler, 'interval': 'step'}]
         #return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
+        #steps_per_epoch=self.len_train//(self.batch_size * 8)
