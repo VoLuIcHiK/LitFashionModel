@@ -4,16 +4,18 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torchmetrics.functional import accuracy
-from torch.optim.lr_scheduler import ExponentialLR
+from torch.optim.lr_scheduler import ExponentialLR, OneCycleLR
 PATH_DATASETS = './lesson4'
 BATCH_SIZE = 64
 
 
 class LitFashionMNIST(L.LightningModule):
-    def __init__(self, num_classes, learning_rate=2e-4):
+    def __init__(self, num_classes, len_fmnist_train, batch_size, epochs):
         super().__init__()
         self.num_classes = num_classes
-        self.learning_rate = learning_rate
+        self.len_fmnist_train = len_fmnist_train
+        self.batch_size = batch_size
+        self.epochs = epochs
         self.model = nn.Sequential(
             #(channels * width * height)
             #input (1 * 28 * 28)
@@ -56,9 +58,16 @@ class LitFashionMNIST(L.LightningModule):
         self.log("val_loss", loss, prog_bar=True)
         self.log("val_acc", acc, prog_bar=True)
         #self.logger.log_image(self, key='sample_images', images=images, caption=captions)
-        #WandbLogger.watch(self.model, log='all')
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
-        lr_scheduler = ExponentialLR(optimizer, gamma=0.9)
-        return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
+        #lr_scheduler = ExponentialLR(optimizer, gamma=0.9)
+        lr_scheduler = OneCycleLR(
+            optimizer,
+            max_lr=0.01,
+            steps_per_epoch=len(self.len_fmnist_train)//(self.batch_size * 8),
+            epochs=self.epochs,
+            three_phase=True
+        )
+        return [optimizer], [{'scheduler': lr_scheduler, 'interval': 'step'}]
+        #return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}

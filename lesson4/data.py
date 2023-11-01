@@ -7,7 +7,7 @@ BATCH_SIZE = 64
 
 
 class FashionMNISTDataModule(L.LightningDataModule):
-    def __init__(self, learning_rate, data_dir: str = PATH_DATASETS):
+    def __init__(self, data_dir: str = PATH_DATASETS):
         super().__init__()
         self.data_dir = data_dir
         self.transform = transforms.Compose(
@@ -18,7 +18,6 @@ class FashionMNISTDataModule(L.LightningDataModule):
         )
         self.dims = (1, 28, 28)
         self.num_classes = 10
-        self.learning_rate = learning_rate
 
     def prepare_data(self):
         #скачивание данных
