@@ -15,7 +15,6 @@ def train(path, epochs):
         img_height=28,
         batch_size=BATCH_SIZE,
         epochs=epochs,
-        learning_rate=LEARNING_RATE,
         activation='ReLU',
         kernels=[5],
         architecture="CNN"
